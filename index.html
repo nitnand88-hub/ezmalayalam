@@ -2,63 +2,69 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>EZMalayalam Subtitle Editor</title>
+<title>EZMalayalam Pro Editor</title>
 
 <style>
 
-/* ===== FONTS ===== */
-@font-face { font-family: 'Manjari'; src: url('fonts/Manjari-Regular.ttf'); }
-@font-face { font-family: 'Gayathri'; src: url('fonts/Gayathri-Regular.ttf'); }
-@font-face { font-family: 'Chilanka'; src: url('fonts/Chilanka-Regular.ttf'); }
-@font-face { font-family: 'Baloo'; src: url('fonts/BalooChettan2-Regular.ttf'); }
-@font-face { font-family: 'NotoSans'; src: url('fonts/NotoSansMalayalam-Regular.ttf'); }
-@font-face { font-family: 'NotoSerif'; src: url('fonts/NotoSerifMalayalam-Regular.ttf'); }
-@font-face { font-family: 'Anek'; src: url('fonts/AnekMalayalam-Regular.ttf'); }
-@font-face { font-family: 'Arima'; src: url('fonts/Arima-Regular.ttf'); }
-
-body {
-    font-family: Arial;
-    background:#f5f5f5;
-    text-align:center;
-    padding:20px;
+body{
+font-family:Arial;
+background:#f5f5f5;
+text-align:center;
+padding:20px;
 }
 
-textarea {
-    width:90%;
-    height:100px;
-    font-size:18px;
-    padding:10px;
-    border-radius:8px;
-    margin-bottom:15px;
+/* TEXT INPUT */
+textarea{
+width:90%;
+height:90px;
+font-size:18px;
+margin-bottom:15px;
+padding:10px;
 }
 
 /* CONTROLS */
-.controls {
-    background:#fff;
-    padding:15px;
-    border-radius:12px;
-    margin:auto;
-    width:90%;
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    justify-content:center;
+.controls{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:15px;
+background:#fff;
+padding:15px;
+border-radius:12px;
+margin-bottom:20px;
 }
 
-/* PREVIEW */
-.preview {
-    margin-top:30px;
+.controls label{
+font-size:13px;
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 
-/* BUTTON */
-button {
-    margin-top:20px;
-    padding:12px 25px;
-    background:#222;
-    color:#fff;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+/* PREVIEW LIST */
+.preview-list{
+display:flex;
+flex-direction:column;
+gap:20px;
+align-items:center;
+}
+
+/* CARD */
+.card{
+display:inline-block;
+}
+
+/* TEXT BOX */
+.subtitle{
+display:inline-block;
+white-space:pre-wrap;
+text-align:center;
+}
+
+button{
+margin-top:5px;
+padding:6px 12px;
+cursor:pointer;
 }
 
 </style>
@@ -68,162 +74,183 @@ button {
 
 <h2>🎬 EZMalayalam Subtitle Editor</h2>
 
-<textarea id="input" placeholder="Type Manglish... (Enter = new line)"></textarea>
+<textarea id="input" placeholder="Type Manglish..."></textarea>
 
 <div class="controls">
 
-<select id="font">
-<option value="Manjari">Manjari</option>
-<option value="Gayathri">Gayathri</option>
-<option value="Chilanka">Chilanka</option>
-<option value="Baloo">Baloo</option>
-<option value="NotoSans">Noto Sans</option>
-<option value="NotoSerif">Noto Serif</option>
-<option value="Anek">Anek</option>
-<option value="Arima">Arima</option>
-</select>
-
+<label>Text Color
 <input type="color" id="color" value="#ffffff">
-<input type="color" id="strokeColor" value="#000000">
-<input type="color" id="bgColor" value="#000000">
+</label>
 
-<input type="range" id="size" min="40" max="150" value="80">
+<label>Stroke ON
+<input type="checkbox" id="strokeToggle" checked>
+</label>
+
+<label>Stroke Size
 <input type="range" id="stroke" min="0" max="6" value="2">
-<input type="range" id="shadow" min="0" max="10" value="4">
-<input type="range" id="padding" min="5" max="40" value="12">
-<input type="range" id="radius" min="0" max="40" value="15">
-<input type="range" id="opacity" min="0" max="1" step="0.1" value="0.6">
+</label>
 
-<label><input type="checkbox" id="bold">Bold</label>
-<label><input type="checkbox" id="italic">Italic</label>
-<label><input type="checkbox" id="transparent">Transparent</label>
+<label>Stroke Color
+<input type="color" id="strokeColor" value="#000000">
+</label>
+
+<label>BG ON
+<input type="checkbox" id="bgToggle" checked>
+</label>
+
+<label>BG Color
+<input type="color" id="bgColor" value="#000000">
+</label>
+
+<label>Padding
+<input type="range" id="padding" min="0" max="40" value="15">
+</label>
+
+<label>Radius
+<input type="range" id="radius" min="0" max="40" value="15">
+</label>
+
+<label>Size
+<input type="range" id="size" min="40" max="120" value="70">
+</label>
 
 </div>
 
-<div id="preview" class="preview"></div>
-
-<button onclick="download()">⬇ Download PNG</button>
-
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<div class="preview-list" id="previewList"></div>
 
 <script>
 
-let lastText = "";
+let lastText="";
+
+/* FONTS */
+const fonts=[
+"Manjari",
+"Gayathri",
+"Chilanka",
+"Baloo",
+"NotoSans",
+"NotoSerif",
+"Anek",
+"Arima"
+];
 
 /* INPUT */
 document.getElementById("input").addEventListener("input", convert);
 
-/* CONVERT (FIXED) */
-async function convert() {
+/* CONVERT */
+async function convert(){
 
-let val = document.getElementById("input").value;
+let val=document.getElementById("input").value;
 
-if (!val) {
-  lastText = "";
-  render();
-  return;
+if(!val){
+lastText="";
+render();
+return;
 }
 
-let lines = val.split("\n");
+const res=await fetch(`https://inputtools.google.com/request?text=${val}&itc=ml-t-i0-und&num=1`);
+const data=await res.json();
 
-let promises = lines.map(async (line) => {
-  if (line.trim() === "") return "";
-
-  const res = await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
-  const data = await res.json();
-
-  return data[1][0][1][0];
-});
-
-let results = await Promise.all(promises);
-
-lastText = results.join("\n");
+lastText=data[1][0][1][0];
 
 render();
 }
 
-/* RENDER */
+/* RENDER MULTIPLE */
 function render(){
 
-if (!lastText) return;
+let container=document.getElementById("previewList");
+container.innerHTML="";
 
-let font = document.getElementById("font").value;
-let color = document.getElementById("color").value;
-let size = document.getElementById("size").value;
-let bold = document.getElementById("bold").checked ? "bold" : "normal";
-let italic = document.getElementById("italic").checked ? "italic" : "normal";
+if(!lastText) return;
 
-let stroke = document.getElementById("stroke").value;
-let strokeColor = document.getElementById("strokeColor").value;
-let shadow = document.getElementById("shadow").value;
+/* KEEP LINE BREAK */
+let text=lastText.split("\n").join("<br>");
 
-let bgColor = document.getElementById("bgColor").value;
-let opacity = document.getElementById("opacity").value;
+let color=document.getElementById("color").value;
+let strokeToggle=document.getElementById("strokeToggle").checked;
+let stroke=document.getElementById("stroke").value;
+let strokeColor=document.getElementById("strokeColor").value;
 
-let padding = parseInt(document.getElementById("padding").value);
-let radius = document.getElementById("radius").value;
+let bgToggle=document.getElementById("bgToggle").checked;
+let bgColor=document.getElementById("bgColor").value;
 
-let background = `rgba(${hexToRgb(bgColor)}, ${opacity})`;
+let padding=document.getElementById("padding").value;
+let radius=document.getElementById("radius").value;
+let size=document.getElementById("size").value;
 
-let html = `
-<div style="display:flex; justify-content:center; width:100%;">
-  <div style="
-    font-family:${font};
-    color:${color};
-    font-size:${size}px;
-    font-weight:${bold};
-    font-style:${italic};
-    -webkit-text-stroke:${stroke}px ${strokeColor};
-    text-shadow:0px 2px ${shadow}px rgba(0,0,0,0.8);
-    background:${background};
-    padding:${padding}px ${padding * 1.5}px;
-    border-radius:${radius}px;
-    max-width:700px;
-    line-height:1.3;
-    text-align:center;
-    white-space:pre-wrap;
-    word-break:break-word;
-    box-sizing:border-box;
-  ">
-${lastText}
-  </div>
-</div>
-`;
+/* LOOP FONTS */
+fonts.forEach(font=>{
 
-document.getElementById("preview").innerHTML = html;
+let card=document.createElement("div");
+card.className="card";
+
+let subtitle=document.createElement("div");
+
+subtitle.className="subtitle";
+subtitle.innerHTML=text;
+
+subtitle.style.fontFamily=font;
+subtitle.style.fontSize=size+"px";
+subtitle.style.color=color;
+
+subtitle.style.padding=padding+"px";
+subtitle.style.borderRadius=radius+"px";
+
+subtitle.style.display="inline-block";
+subtitle.style.margin="0 auto";
+
+/* FIX ALIGN CENTER */
+subtitle.style.textAlign="center";
+
+/* STROKE */
+if(strokeToggle){
+subtitle.style.webkitTextStroke=stroke+"px "+strokeColor;
+}else{
+subtitle.style.webkitTextStroke="0px transparent";
+}
+
+/* BACKGROUND */
+if(bgToggle){
+subtitle.style.background=bgColor;
+}else{
+subtitle.style.background="transparent";
+}
+
+/* BUTTON */
+let btn=document.createElement("button");
+btn.innerText="Download";
+
+btn.onclick=()=>{
+html2canvas(subtitle,{
+backgroundColor:null,
+scale:3
+}).then(canvas=>{
+let link=document.createElement("a");
+link.download=font+".png";
+link.href=canvas.toDataURL();
+link.click();
+});
+};
+
+card.appendChild(subtitle);
+card.appendChild(document.createElement("br"));
+card.appendChild(btn);
+
+container.appendChild(card);
+
+});
+
 }
 
 /* LIVE */
-document.querySelectorAll("input,select").forEach(i=>{
-i.addEventListener("input",render);
+document.querySelectorAll("input").forEach(el=>{
+el.addEventListener("input",render);
 });
-
-/* HEX TO RGB */
-function hexToRgb(hex){
-let r = parseInt(hex.substring(1,3),16);
-let g = parseInt(hex.substring(3,5),16);
-let b = parseInt(hex.substring(5,7),16);
-return `${r},${g},${b}`;
-}
-
-/* DOWNLOAD */
-function download(){
-
-let el = document.getElementById("preview");
-let transparent = document.getElementById("transparent").checked;
-
-html2canvas(el,{
-backgroundColor: transparent ? null : "#ffffff",
-scale:4
-}).then(canvas=>{
-let link = document.createElement("a");
-link.download = "subtitle.png";
-link.href = canvas.toDataURL();
-link.click();
-});
-}
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 </body>
 </html>
