@@ -193,6 +193,7 @@ let lastText="";
 
 document.getElementById("input").addEventListener("input", convert);
 
+/* ===== FIXED LINE BREAK CONVERSION ===== */
 async function convert(){
 
 let val=document.getElementById("input").value;
@@ -202,20 +203,33 @@ document.getElementById("preview").innerHTML="";
 return;
 }
 
-const res=await fetch(`https://inputtools.google.com/request?text=${val}&itc=ml-t-i0-und&num=1`);
-const data=await res.json();
+let lines = val.split("\n");
+let finalText=[];
 
-lastText=data[1][0][1][0];
+for(let line of lines){
+
+if(line.trim()===""){
+finalText.push("");
+continue;
+}
+
+const res = await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
+const data = await res.json();
+
+finalText.push(data[1][0][1][0]);
+}
+
+lastText = finalText.join("\n");
 
 render();
 }
 
+/* ===== RENDER ===== */
 function render(){
 
 if(!lastText) return;
 
-let textHTML=lastText.replace(/\n/g,"<br>");
-let plainText=lastText;
+let textHTML = lastText.replace(/\n/g,"<br>");
 
 let color=document.getElementById("color").value;
 let size=document.getElementById("size").value;
@@ -252,8 +266,12 @@ background:${bgToggle?bgColor:"transparent"};
 -webkit-text-stroke:${strokeToggle?2:0}px ${strokeColor};
 text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`:"none"};
 text-align:center;
-display:inline-block;
+display:block;
+margin:auto;
 white-space:pre-wrap;
+max-width:90%;
+word-break:break-word;
+box-sizing:border-box;
 line-height:1.3;
 ">
 ${textHTML}
