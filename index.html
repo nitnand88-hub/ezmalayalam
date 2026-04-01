@@ -14,105 +14,123 @@
 
 body{
 font-family:Arial;
-background:#f2f2f2;
-text-align:center;
+background:#f5f5f5;
 padding:20px;
+text-align:center;
 }
 
+/* TEXT INPUT */
 textarea{
 width:90%;
-height:80px;
+height:90px;
 font-size:18px;
-margin-bottom:10px;
-padding:10px;
+padding:12px;
+margin-bottom:20px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
+/* CONTROLS GRID */
 .controls{
+display:grid;
+grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+gap:20px;
+background:#fff;
+padding:20px;
+border-radius:12px;
+width:90%;
+margin:auto;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.group{
+text-align:left;
+}
+
+.group b{
+display:block;
+margin-bottom:8px;
+}
+
+/* PREVIEW */
+.preview{
+margin-top:30px;
+}
+
+/* CARD */
+.subtitle-box{
 background:#fff;
 padding:15px;
-border-radius:10px;
-margin:10px auto;
-width:90%;
-}
-
-.preview{
-margin-top:20px;
-}
-
-.subtitle-box{
-display:block;
+border-radius:12px;
 margin:20px auto;
 width:fit-content;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
 }
 
+/* TEXT */
 .subtitle-text{
 display:inline-block;
 white-space:pre-wrap;
 text-align:center;
-margin:0 auto;
 }
 
+/* FONT NAME */
 .font-label{
 font-size:13px;
-margin-bottom:5px;
-color:#555;
+margin-bottom:8px;
+color:#666;
 }
 
+/* BUTTON */
 button{
-margin-top:5px;
-padding:6px 12px;
+margin-top:10px;
+padding:8px 14px;
+border:none;
+border-radius:6px;
+background:#222;
+color:#fff;
 cursor:pointer;
 }
 
-</style></head><body><h2>EZMalayalam</h2><textarea id="input" placeholder="Type Manglish..."></textarea><div class="controls"><b>Text</b><br>
+button:hover{
+background:#000;
+}
+
+</style></head><body><h2>🎬 EZMalayalam</h2><textarea id="input" placeholder="Type Manglish..."></textarea><div class="controls"><div class="group">
+<b>Text</b>
 <input type="color" id="color" value="#ffffff">
-
-<br><br>
-
-<b>Stroke</b><br>
-<input type="checkbox" id="strokeToggle" checked> ON
+</div><div class="group">
+<b>Stroke</b>
+<label><input type="checkbox" id="strokeToggle" checked> Enable</label>
 <input type="range" id="stroke" min="0" max="6" value="2">
 <input type="color" id="strokeColor" value="#000000">
-
-<br><br>
-
-<b>Shadow</b><br>
-<input type="checkbox" id="shadowToggle" checked> ON
+</div><div class="group">
+<b>Shadow</b>
+<label><input type="checkbox" id="shadowToggle" checked> Enable</label>
 <input type="range" id="shadow" min="0" max="10" value="3">
-
-<br><br>
-
-<b>Background</b><br>
-<input type="checkbox" id="bgToggle" checked> ON
+</div><div class="group">
+<b>Background</b>
+<label><input type="checkbox" id="bgToggle" checked> Enable</label>
 <input type="color" id="bgColor" value="#000000">
 <input type="range" id="opacity" min="0" max="1" step="0.1" value="0.6">
-
-<br><br>
-
-Size <input type="range" id="size" min="40" max="120" value="70">
-Padding <input type="range" id="padding" min="0" max="40" value="15">
+</div><div class="group">
+<b>Layout</b>
+Size <input type="range" id="size" min="40" max="120" value="70"><br>
+Padding <input type="range" id="padding" min="0" max="40" value="15"><br>
 Radius <input type="range" id="radius" min="0" max="40" value="15">
-
-</div><div class="preview" id="preview"></div><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script><script>
+</div></div><div class="preview" id="preview"></div><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script><script>
 
 let lastText="";
 
 const fonts=[
-"Manjari",
-"Gayathri",
-"Chilanka",
-"Baloo",
-"NotoSans",
-"NotoSerif",
-"Anek",
-"Arima"
+"Manjari","Gayathri","Chilanka","Baloo",
+"NotoSans","NotoSerif","Anek","Arima"
 ];
 
 document.getElementById("input").addEventListener("input",convert);
 
-/* ✅ FIXED LINE BREAK LOGIC */
+/* LINE FIX */
 async function convert(){
-
 let val=document.getElementById("input").value;
 
 if(!val){
@@ -121,26 +139,19 @@ render();
 return;
 }
 
-/* SPLIT LINES */
 let lines=val.split("\n");
-let convertedLines=[];
+let out=[];
 
 for(let line of lines){
-
-if(line.trim()===""){
-convertedLines.push("");
-continue;
-}
+if(line.trim()===""){ out.push(""); continue; }
 
 const res=await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
 const data=await res.json();
 
-convertedLines.push(data[1][0][1][0]);
+out.push(data[1][0][1][0]);
 }
 
-/* JOIN WITH LINE BREAK */
-lastText=convertedLines.join("<br>");
-
+lastText=out.join("<br>");
 render();
 }
 
@@ -151,59 +162,54 @@ container.innerHTML="";
 
 if(!lastText) return;
 
-let color=document.getElementById("color").value;
+let color=colorEl.value;
 
-let strokeToggle=document.getElementById("strokeToggle").checked;
-let stroke=document.getElementById("stroke").value;
-let strokeColor=document.getElementById("strokeColor").value;
+let strokeToggle=strokeToggleEl.checked;
+let stroke=strokeEl.value;
+let strokeColor=strokeColorEl.value;
 
-let shadowToggle=document.getElementById("shadowToggle").checked;
-let shadow=document.getElementById("shadow").value;
+let shadowToggle=shadowToggleEl.checked;
+let shadow=shadowEl.value;
 
-let bgToggle=document.getElementById("bgToggle").checked;
-let bgColor=document.getElementById("bgColor").value;
-let opacity=document.getElementById("opacity").value;
+let bgToggle=bgToggleEl.checked;
+let bgColor=bgColorEl.value;
+let opacity=opacityEl.value;
 
-let size=document.getElementById("size").value;
-let padding=document.getElementById("padding").value;
-let radius=document.getElementById("radius").value;
+let size=sizeEl.value;
+let padding=paddingEl.value;
+let radius=radiusEl.value;
 
 fonts.forEach(font=>{
 
 let box=document.createElement("div");
 box.className="subtitle-box";
 
-/* ✅ FONT NAME BACK */
 let label=document.createElement("div");
 label.className="font-label";
 label.innerText=font;
 
 let textDiv=document.createElement("div");
 textDiv.className="subtitle-text";
-
 textDiv.innerHTML=lastText;
 
 textDiv.style.fontFamily=font;
 textDiv.style.fontSize=size+"px";
 textDiv.style.color=color;
 
-/* STROKE */
 if(strokeToggle){
 textDiv.style.webkitTextStroke=stroke+"px "+strokeColor;
 }else{
-textDiv.style.webkitTextStroke="0px transparent";
+textDiv.style.webkitTextStroke="none";
 }
 
-/* SHADOW */
 if(shadowToggle){
 textDiv.style.textShadow=`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.6)`;
 }else{
 textDiv.style.textShadow="none";
 }
 
-/* BACKGROUND */
 if(bgToggle){
-textDiv.style.background=`rgba(${hexToRgb(bgColor)},${opacity})`;
+textDiv.style.background=`rgba(${hex(bgColor)},${opacity})`;
 textDiv.style.padding=padding+"px";
 textDiv.style.borderRadius=radius+"px";
 }else{
@@ -215,10 +221,7 @@ let btn=document.createElement("button");
 btn.innerText="Download";
 
 btn.onclick=()=>{
-html2canvas(textDiv,{
-backgroundColor:null,
-scale:3
-}).then(canvas=>{
+html2canvas(textDiv,{backgroundColor:null,scale:3}).then(canvas=>{
 let link=document.createElement("a");
 link.download=font+".png";
 link.href=canvas.toDataURL();
@@ -228,7 +231,6 @@ link.click();
 
 box.appendChild(label);
 box.appendChild(textDiv);
-box.appendChild(document.createElement("br"));
 box.appendChild(btn);
 
 container.appendChild(box);
@@ -237,12 +239,22 @@ container.appendChild(box);
 
 }
 
-function hexToRgb(hex){
-let r=parseInt(hex.substr(1,2),16);
-let g=parseInt(hex.substr(3,2),16);
-let b=parseInt(hex.substr(5,2),16);
-return `${r},${g},${b}`;
+function hex(h){
+return `${parseInt(h.substr(1,2),16)},${parseInt(h.substr(3,2),16)},${parseInt(h.substr(5,2),16)}`
 }
+
+const colorEl=color;
+const strokeToggleEl=strokeToggle;
+const strokeEl=stroke;
+const strokeColorEl=strokeColor;
+const shadowToggleEl=shadowToggle;
+const shadowEl=shadow;
+const bgToggleEl=bgToggle;
+const bgColorEl=bgColor;
+const opacityEl=opacity;
+const sizeEl=size;
+const paddingEl=padding;
+const radiusEl=radius;
 
 document.querySelectorAll("input").forEach(el=>{
 el.addEventListener("input",render);
