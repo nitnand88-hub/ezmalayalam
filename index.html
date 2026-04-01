@@ -215,7 +215,6 @@ function render(){
 if(!lastText) return;
 
 let textHTML=lastText.replace(/\n/g,"<br>");
-let plainText=lastText;
 
 let color=document.getElementById("color").value;
 let size=document.getElementById("size").value;
@@ -252,13 +251,12 @@ background:${bgToggle?bgColor:"transparent"};
 -webkit-text-stroke:${strokeToggle?2:0}px ${strokeColor};
 text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`:"none"};
 
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
+display:inline-block;
 white-space:pre-wrap;
-line-height:1.15;
+line-height:1.1;
+vertical-align:middle;
 text-align:center;
+
 ">
 ${textHTML}
 </div>
