@@ -193,6 +193,7 @@ let lastText="";
 
 document.getElementById("input").addEventListener("input", convert);
 
+/* ✅ FIXED CONVERT FUNCTION */
 async function convert(){
 
 let val=document.getElementById("input").value;
@@ -202,10 +203,24 @@ document.getElementById("preview").innerHTML="";
 return;
 }
 
-const res=await fetch(`https://inputtools.google.com/request?text=${val}&itc=ml-t-i0-und&num=1`);
+let lines = val.split(/\r?\n/);
+let finalLines = [];
+
+for (let line of lines){
+
+if(line.trim()===""){
+finalLines.push("");
+continue;
+}
+
+const res=await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
 const data=await res.json();
 
-lastText=data[1][0][1][0];
+finalLines.push(data[1][0][1][0]);
+
+}
+
+lastText = finalLines.join("\n");
 
 render();
 }
@@ -214,7 +229,6 @@ function render(){
 
 if(!lastText) return;
 
-/* ✅ LINE BREAK FIX */
 let textHTML = lastText
   .replace(/\r\n/g,"\n")
   .replace(/\n/g,"<br>");
