@@ -214,7 +214,11 @@ function render(){
 
 if(!lastText) return;
 
-let textHTML=lastText.replace(/\n/g,"<br>");
+/* ✅ LINE BREAK FIX */
+let textHTML = lastText
+  .replace(/\r\n/g,"\n")
+  .replace(/\n/g,"<br>");
+
 let plainText=lastText;
 
 let color=document.getElementById("color").value;
@@ -252,9 +256,11 @@ background:${bgToggle?bgColor:"transparent"};
 -webkit-text-stroke:${strokeToggle?2:0}px ${strokeColor};
 text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`:"none"};
 text-align:center;
-display:inline-block;
+display:block;
+margin:0 auto;
 white-space:pre-wrap;
-line-height:1.3;
+line-height:1.4;
+box-sizing:border-box;
 ">
 ${textHTML}
 </div>
