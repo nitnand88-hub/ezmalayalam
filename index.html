@@ -1,64 +1,57 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
 <meta charset="UTF-8">
-<title>EZMalayalam Pro Editor</title>
+<title>EZMalayalam Pro Editor</title><style>
 
-<style>
+@font-face { font-family: 'Manjari'; src: url('fonts/Manjari-Regular.ttf'); }
+@font-face { font-family: 'Gayathri'; src: url('fonts/Gayathri-Regular.ttf'); }
+@font-face { font-family: 'Chilanka'; src: url('fonts/Chilanka-Regular.ttf'); }
+@font-face { font-family: 'Baloo'; src: url('fonts/BalooChettan2-Regular.ttf'); }
+@font-face { font-family: 'NotoSans'; src: url('fonts/NotoSansMalayalam-Regular.ttf'); }
+@font-face { font-family: 'NotoSerif'; src: url('fonts/NotoSerifMalayalam-Regular.ttf'); }
+@font-face { font-family: 'Anek'; src: url('fonts/AnekMalayalam-Regular.ttf'); }
+@font-face { font-family: 'Arima'; src: url('fonts/Arima-Regular.ttf'); }
 
 body{
 font-family:Arial;
-background:#f5f5f5;
+background:#f2f2f2;
 text-align:center;
 padding:20px;
 }
 
-/* TEXT INPUT */
 textarea{
 width:90%;
-height:90px;
+height:80px;
 font-size:18px;
-margin-bottom:15px;
+margin-bottom:10px;
 padding:10px;
 }
 
-/* CONTROLS */
 .controls{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:15px;
 background:#fff;
 padding:15px;
-border-radius:12px;
-margin-bottom:20px;
+border-radius:10px;
+margin:10px auto;
+width:90%;
 }
 
-.controls label{
-font-size:13px;
-display:flex;
-flex-direction:column;
-align-items:center;
+/* PREVIEW */
+.preview{
+margin-top:20px;
 }
 
-/* PREVIEW LIST */
-.preview-list{
-display:flex;
-flex-direction:column;
-gap:20px;
-align-items:center;
+.subtitle-box{
+display:block;
+margin:20px auto;
+width:fit-content;
 }
 
-/* CARD */
-.card{
-display:inline-block;
-}
-
-/* TEXT BOX */
-.subtitle{
+/* TEXT FIX */
+.subtitle-text{
 display:inline-block;
 white-space:pre-wrap;
 text-align:center;
+margin:0 auto;
 }
 
 button{
@@ -67,62 +60,39 @@ padding:6px 12px;
 cursor:pointer;
 }
 
-</style>
-</head>
-
-<body>
-
-<h2>🎬 EZMalayalam Subtitle Editor</h2>
-
-<textarea id="input" placeholder="Type Manglish..."></textarea>
-
-<div class="controls">
-
-<label>Text Color
+</style></head><body><h2>EZMalayalam</h2><textarea id="input" placeholder="Type Manglish..."></textarea><div class="controls"><b>Text</b><br>
 <input type="color" id="color" value="#ffffff">
-</label>
 
-<label>Stroke ON
-<input type="checkbox" id="strokeToggle" checked>
-</label>
+<br><br>
 
-<label>Stroke Size
+<b>Stroke</b><br>
+<input type="checkbox" id="strokeToggle" checked> ON
 <input type="range" id="stroke" min="0" max="6" value="2">
-</label>
-
-<label>Stroke Color
 <input type="color" id="strokeColor" value="#000000">
-</label>
 
-<label>BG ON
-<input type="checkbox" id="bgToggle" checked>
-</label>
+<br><br>
 
-<label>BG Color
+<b>Shadow</b><br>
+<input type="checkbox" id="shadowToggle" checked> ON
+<input type="range" id="shadow" min="0" max="10" value="3">
+
+<br><br>
+
+<b>Background</b><br>
+<input type="checkbox" id="bgToggle" checked> ON
 <input type="color" id="bgColor" value="#000000">
-</label>
+<input type="range" id="opacity" min="0" max="1" step="0.1" value="0.6">
 
-<label>Padding
-<input type="range" id="padding" min="0" max="40" value="15">
-</label>
+<br><br>
 
-<label>Radius
-<input type="range" id="radius" min="0" max="40" value="15">
-</label>
+Size <input type="range" id="size" min="40" max="120" value="70">
+Padding <input type="range" id="padding" min="0" max="40" value="15">
+Radius <input type="range" id="radius" min="0" max="40" value="15">
 
-<label>Size
-<input type="range" id="size" min="40" max="120" value="70">
-</label>
-
-</div>
-
-<div class="preview-list" id="previewList"></div>
-
-<script>
+</div><div class="preview" id="preview"></div><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script><script>
 
 let lastText="";
 
-/* FONTS */
 const fonts=[
 "Manjari",
 "Gayathri",
@@ -134,10 +104,8 @@ const fonts=[
 "Arima"
 ];
 
-/* INPUT */
-document.getElementById("input").addEventListener("input", convert);
+document.getElementById("input").addEventListener("input",convert);
 
-/* CONVERT */
 async function convert(){
 
 let val=document.getElementById("input").value;
@@ -156,73 +124,80 @@ lastText=data[1][0][1][0];
 render();
 }
 
-/* RENDER MULTIPLE */
 function render(){
 
-let container=document.getElementById("previewList");
+let container=document.getElementById("preview");
 container.innerHTML="";
 
 if(!lastText) return;
 
-/* KEEP LINE BREAK */
+/* FIX LINE BREAK */
 let text=lastText.split("\n").join("<br>");
 
 let color=document.getElementById("color").value;
+
 let strokeToggle=document.getElementById("strokeToggle").checked;
 let stroke=document.getElementById("stroke").value;
 let strokeColor=document.getElementById("strokeColor").value;
 
+let shadowToggle=document.getElementById("shadowToggle").checked;
+let shadow=document.getElementById("shadow").value;
+
 let bgToggle=document.getElementById("bgToggle").checked;
 let bgColor=document.getElementById("bgColor").value;
+let opacity=document.getElementById("opacity").value;
 
+let size=document.getElementById("size").value;
 let padding=document.getElementById("padding").value;
 let radius=document.getElementById("radius").value;
-let size=document.getElementById("size").value;
 
-/* LOOP FONTS */
 fonts.forEach(font=>{
 
-let card=document.createElement("div");
-card.className="card";
+let box=document.createElement("div");
+box.className="subtitle-box";
 
-let subtitle=document.createElement("div");
+let textDiv=document.createElement("div");
+textDiv.className="subtitle-text";
 
-subtitle.className="subtitle";
-subtitle.innerHTML=text;
+textDiv.innerHTML=text;
 
-subtitle.style.fontFamily=font;
-subtitle.style.fontSize=size+"px";
-subtitle.style.color=color;
+textDiv.style.fontFamily=font;
+textDiv.style.fontSize=size+"px";
+textDiv.style.color=color;
 
-subtitle.style.padding=padding+"px";
-subtitle.style.borderRadius=radius+"px";
-
-subtitle.style.display="inline-block";
-subtitle.style.margin="0 auto";
-
-/* FIX ALIGN CENTER */
-subtitle.style.textAlign="center";
+/* FIX CENTER ALIGN PERFECTLY */
+textDiv.style.margin="0 auto";
 
 /* STROKE */
 if(strokeToggle){
-subtitle.style.webkitTextStroke=stroke+"px "+strokeColor;
+textDiv.style.webkitTextStroke=stroke+"px "+strokeColor;
 }else{
-subtitle.style.webkitTextStroke="0px transparent";
+textDiv.style.webkitTextStroke="0px transparent";
 }
 
-/* BACKGROUND */
+/* SHADOW */
+if(shadowToggle){
+textDiv.style.textShadow=`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.6)`;
+}else{
+textDiv.style.textShadow="none";
+}
+
+/* BACKGROUND FIX */
 if(bgToggle){
-subtitle.style.background=bgColor;
+textDiv.style.background=`rgba(${hexToRgb(bgColor)},${opacity})`;
+textDiv.style.padding=padding+"px";
+textDiv.style.borderRadius=radius+"px";
 }else{
-subtitle.style.background="transparent";
+textDiv.style.background="transparent";
+textDiv.style.padding="0px";
 }
 
-/* BUTTON */
+/* DOWNLOAD */
 let btn=document.createElement("button");
 btn.innerText="Download";
 
 btn.onclick=()=>{
-html2canvas(subtitle,{
+html2canvas(textDiv,{
 backgroundColor:null,
 scale:3
 }).then(canvas=>{
@@ -233,24 +208,27 @@ link.click();
 });
 };
 
-card.appendChild(subtitle);
-card.appendChild(document.createElement("br"));
-card.appendChild(btn);
+box.appendChild(textDiv);
+box.appendChild(document.createElement("br"));
+box.appendChild(btn);
 
-container.appendChild(card);
+container.appendChild(box);
 
 });
 
 }
 
-/* LIVE */
+/* HEX TO RGB FIX */
+function hexToRgb(hex){
+let r=parseInt(hex.substr(1,2),16);
+let g=parseInt(hex.substr(3,2),16);
+let b=parseInt(hex.substr(5,2),16);
+return `${r},${g},${b}`;
+}
+
 document.querySelectorAll("input").forEach(el=>{
 el.addEventListener("input",render);
 });
 
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-</body>
+</script></body>
 </html>
