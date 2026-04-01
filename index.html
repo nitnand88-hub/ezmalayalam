@@ -1,320 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>EZMalayalam Subtitle Editor</title>
+<title>EZMalayalam</title>
 
 <style>
-
-/* ===== FONTS ===== */
-@font-face { font-family: 'Manjari'; src: url('fonts/Manjari-Regular.ttf'); }
-@font-face { font-family: 'Gayathri'; src: url('fonts/Gayathri-Regular.ttf'); }
-@font-face { font-family: 'Chilanka'; src: url('fonts/Chilanka-Regular.ttf'); }
-@font-face { font-family: 'Baloo'; src: url('fonts/BalooChettan2-Regular.ttf'); }
-@font-face { font-family: 'NotoSans'; src: url('fonts/NotoSansMalayalam-Regular.ttf'); }
-@font-face { font-family: 'NotoSerif'; src: url('fonts/NotoSerifMalayalam-Regular.ttf'); }
-@font-face { font-family: 'Anek'; src: url('fonts/AnekMalayalam-Regular.ttf'); }
-@font-face { font-family: 'Arima'; src: url('fonts/Arima-Regular.ttf'); }
-
-body{
-font-family:Arial;
-background:#f5f6fa;
-margin:0;
-padding:15px;
-text-align:center;
+body {
+  font-family: system-ui;
+  margin: 0;
+  background: #f5f6fa;
 }
 
-/* ===== INPUT ===== */
-textarea{
-width:100%;
-max-width:900px;
-height:100px;
-font-size:16px;
-padding:10px;
-border-radius:10px;
-border:1px solid #ccc;
-margin-bottom:20px;
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
 }
 
-/* ===== CONTROLS ===== */
-.controls{
-background:#fff;
-padding:15px;
-border-radius:12px;
-max-width:900px;
-margin:10px auto;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-gap:12px;
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.control-group{
-display:flex;
-flex-direction:column;
-align-items:center;
-font-size:12px;
+textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
-.control-group input[type="range"]{
-width:100%;
+/* CLEAN CONTROL PANEL */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
 }
 
-/* ===== PREVIEW ===== */
-.preview{
-margin-top:30px;
+.control-group {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
 }
 
-/* ===== CARD ===== */
-.subtitle-box{
-background:#fff;
-padding:15px;
-border-radius:14px;
-margin:20px auto;
-width:fit-content;
-max-width:95%;
-box-shadow:0 8px 25px rgba(0,0,0,0.08);
-transition:0.2s;
+.control-group label {
+  margin-bottom: 4px;
+  font-weight: 600;
 }
 
-.subtitle-box:hover{
-transform:scale(1.02);
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.font-label{
-font-size:13px;
-margin-bottom:8px;
-color:#444;
-font-weight:600;
+.font-block {
+  text-align: center;
 }
 
-/* ===== BUTTONS ===== */
-.button-row{
-margin-top:10px;
-display:flex;
-gap:10px;
-justify-content:center;
-flex-wrap:wrap;
+.font-name {
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #555;
 }
 
-button{
-padding:7px 12px;
-border:none;
-background:#111;
-color:#fff;
-border-radius:6px;
-cursor:pointer;
-font-size:12px;
+.preview-box {
+  display: inline-block;
+  margin: auto;
 }
 
-.copy-btn{
-background:#2d89ef;
+button {
+  margin-top: 8px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-/* ===== MOBILE ===== */
+.download-btn {
+  background: black;
+  color: white;
+}
+
+.copy-btn {
+  background: #007bff;
+  color: white;
+  margin-left: 6px;
+}
+
+/* MOBILE */
 @media (max-width:600px){
-
-textarea{
-font-size:14px;
-height:90px;
+  textarea { height: 70px; }
 }
-
-.subtitle-box{
-padding:12px;
-}
-
-button{
-font-size:11px;
-padding:6px 10px;
-}
-
-}
-
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<h2>🎬 EZMalayalam</h2>
+<h1>🇮🇳 EZMalayalam</h1>
 
-<textarea id="input" placeholder="Type Manglish..."></textarea>
+<textarea id="inputText" placeholder="Type here..."></textarea>
 
-<!-- CONTROLS -->
 <div class="controls">
 
-<div class="control-group">
-<label>Text</label>
-<input type="color" id="color" value="#ffffff">
+  <div class="control-group">
+    <label>Text Color</label>
+    <input type="color" id="textColor" value="#ffffff">
+  </div>
+
+  <div class="control-group">
+    <label>Stroke</label>
+    <input type="checkbox" id="strokeToggle">
+    <input type="color" id="strokeColor" value="#000000">
+  </div>
+
+  <div class="control-group">
+    <label>Shadow</label>
+    <input type="checkbox" id="shadowToggle" checked>
+    <input type="range" id="shadowSize" min="0" max="10" value="3">
+  </div>
+
+  <div class="control-group">
+    <label>Background</label>
+    <input type="checkbox" id="bgToggle" checked>
+    <input type="color" id="bgColor" value="#000000">
+  </div>
+
+  <div class="control-group">
+    <label>Size</label>
+    <input type="range" id="fontSize" min="20" max="80" value="40">
+  </div>
+
+  <div class="control-group">
+    <label>Padding</label>
+    <input type="range" id="padding" min="5" max="50" value="20">
+  </div>
+
+  <div class="control-group">
+    <label>Radius</label>
+    <input type="range" id="radius" min="0" max="50" value="15">
+  </div>
+
 </div>
 
-<div class="control-group">
-<label>Stroke</label>
-<input type="checkbox" id="strokeToggle" checked>
-<input type="color" id="strokeColor" value="#000000">
-</div>
-
-<div class="control-group">
-<label>Shadow</label>
-<input type="checkbox" id="shadowToggle" checked>
-<input type="range" id="shadow" min="0" max="10" value="3">
-</div>
-
-<div class="control-group">
-<label>Background</label>
-<input type="checkbox" id="bgToggle" checked>
-<input type="color" id="bgColor" value="#000000">
-</div>
-
-<div class="control-group">
-<label>Size</label>
-<input type="range" id="size" min="40" max="150" value="80">
-</div>
-
-<div class="control-group">
-<label>Padding</label>
-<input type="range" id="padding" min="0" max="40" value="15">
-</div>
-
-<div class="control-group">
-<label>Radius</label>
-<input type="range" id="radius" min="0" max="40" value="15">
-</div>
+<div class="preview-container" id="preview"></div>
 
 </div>
 
-<!-- PREVIEW -->
-<div id="preview" class="preview"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <script>
+const fonts = [
+  "Anek Malayalam",
+  "Manjari",
+  "Gayathri",
+  "Chilanka",
+  "Baloo Chettan 2"
+];
 
-let lastText="";
+const input = document.getElementById("inputText");
+const preview = document.getElementById("preview");
 
-document.getElementById("input").addEventListener("input", convert);
+document.querySelectorAll("input, textarea").forEach(el=>{
+  el.addEventListener("input", render);
+});
 
-/* ===== FIXED LINE BREAK CONVERSION ===== */
-async function convert(){
+function render(){
+  preview.innerHTML = "";
 
-let val=document.getElementById("input").value;
+  const text = input.value || "Type something";
 
-if(!val){
-document.getElementById("preview").innerHTML="";
-return;
+  const color = document.getElementById("textColor").value;
+  const strokeColor = document.getElementById("strokeColor").value;
+  const strokeToggle = document.getElementById("strokeToggle").checked;
+
+  const shadowToggle = document.getElementById("shadowToggle").checked;
+  const shadow = document.getElementById("shadowSize").value;
+
+  const bgToggle = document.getElementById("bgToggle").checked;
+  const bgColor = document.getElementById("bgColor").value;
+
+  const size = document.getElementById("fontSize").value;
+  const padding = document.getElementById("padding").value;
+  const radius = document.getElementById("radius").value;
+
+  fonts.forEach(font=>{
+    const block = document.createElement("div");
+    block.className = "font-block";
+
+    block.innerHTML = `
+      <div class="font-name">${font}</div>
+
+      <div class="preview-box" id="box-${font}" style="
+        font-family:'${font}';
+        color:${color};
+        font-size:${size}px;
+        padding:${padding}px;
+        border-radius:${radius}px;
+        background:${bgToggle?bgColor:"transparent"};
+        -webkit-text-stroke:${strokeToggle?2:0}px ${strokeColor};
+        text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`:"none"};
+        text-align:center;
+        white-space:pre-wrap;
+        width:fit-content;
+        max-width:90%;
+        margin:auto;
+        word-break:normal;
+        overflow-wrap:break-word;
+        box-sizing:border-box;
+        line-height:1.3;
+      ">
+        ${text}
+      </div>
+
+      <div>
+        <button class="download-btn" onclick="download('${font}')">Download</button>
+        <button class="copy-btn" onclick="copyText()">Copy Text</button>
+      </div>
+    `;
+
+    preview.appendChild(block);
+  });
 }
 
-let lines = val.split("\n");
-let finalText=[];
-
-for(let line of lines){
-
-if(line.trim()===""){
-finalText.push("");
-continue;
+function copyText(){
+  navigator.clipboard.writeText(input.value);
 }
 
-const res = await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
-const data = await res.json();
+function download(font){
+  const box = document.getElementById("box-"+font);
 
-finalText.push(data[1][0][1][0]);
+  html2canvas(box).then(canvas=>{
+    const link = document.createElement("a");
+    link.download = "malayalam.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
 }
-
-lastText = finalText.join("\n");
 
 render();
-}
-
-/* ===== RENDER ===== */
-function render(){
-
-if(!lastText) return;
-
-let textHTML = lastText.replace(/\n/g,"<br>");
-
-let color=document.getElementById("color").value;
-let size=document.getElementById("size").value;
-let padding=document.getElementById("padding").value;
-let radius=document.getElementById("radius").value;
-
-let strokeToggle=document.getElementById("strokeToggle").checked;
-let strokeColor=document.getElementById("strokeColor").value;
-
-let shadowToggle=document.getElementById("shadowToggle").checked;
-let shadow=document.getElementById("shadow").value;
-
-let bgToggle=document.getElementById("bgToggle").checked;
-let bgColor=document.getElementById("bgColor").value;
-
-let fonts=["Manjari","Gayathri","Chilanka","Baloo","NotoSans","NotoSerif","Anek","Arima"];
-
-let html="";
-
-fonts.forEach(font=>{
-
-html+=`
-<div class="subtitle-box">
-
-<div class="font-label">${font}</div>
-
-<div style="
-font-family:${font};
-color:${color};
-font-size:${size}px;
-padding:${padding}px;
-border-radius:${radius}px;
-background:${bgToggle?bgColor:"transparent"};
--webkit-text-stroke:${strokeToggle?2:0}px ${strokeColor};
-text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`:"none"};
-text-align:center;
-display:block;
-margin:auto;
-white-space:pre-wrap;
-max-width:90%;
-word-break:break-word;
-box-sizing:border-box;
-line-height:1.3;
-">
-${textHTML}
-</div>
-
-<div class="button-row">
-<button onclick="download(this)">Download</button>
-<button class="copy-btn" onclick="copyText()">Copy Text</button>
-</div>
-
-</div>
-`;
-});
-
-document.getElementById("preview").innerHTML=html;
-}
-
-/* LIVE */
-document.querySelectorAll("input").forEach(i=>{
-i.addEventListener("input",render);
-});
-
-/* DOWNLOAD */
-function download(btn){
-let el=btn.closest(".subtitle-box");
-
-html2canvas(el,{
-backgroundColor:null,
-scale:3
-}).then(canvas=>{
-let link=document.createElement("a");
-link.download="subtitle.png";
-link.href=canvas.toDataURL();
-link.click();
-});
-}
-
-/* COPY */
-function copyText(){
-navigator.clipboard.writeText(lastText);
-alert("Copied Malayalam text!");
-}
-
 </script>
 
 </body>
