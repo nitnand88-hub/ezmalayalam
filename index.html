@@ -24,7 +24,7 @@ padding:15px;
 text-align:center;
 }
 
-/* ===== INPUT ===== */
+/* INPUT */
 textarea{
 width:100%;
 max-width:900px;
@@ -36,7 +36,7 @@ border:1px solid #ccc;
 margin-bottom:20px;
 }
 
-/* ===== CONTROLS ===== */
+/* CONTROLS */
 .controls{
 background:#fff;
 padding:15px;
@@ -60,12 +60,12 @@ font-size:12px;
 width:100%;
 }
 
-/* ===== PREVIEW ===== */
+/* PREVIEW */
 .preview{
 margin-top:30px;
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .subtitle-box{
 background:#fff;
 padding:15px;
@@ -74,11 +74,6 @@ margin:20px auto;
 width:fit-content;
 max-width:95%;
 box-shadow:0 8px 25px rgba(0,0,0,0.08);
-transition:0.2s;
-}
-
-.subtitle-box:hover{
-transform:scale(1.02);
 }
 
 .font-label{
@@ -88,7 +83,7 @@ color:#444;
 font-weight:600;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTONS */
 .button-row{
 margin-top:10px;
 display:flex;
@@ -111,23 +106,11 @@ font-size:12px;
 background:#2d89ef;
 }
 
-/* ===== MOBILE ===== */
+/* MOBILE */
 @media (max-width:600px){
-
-textarea{
-font-size:14px;
-height:90px;
-}
-
-.subtitle-box{
-padding:12px;
-}
-
-button{
-font-size:11px;
-padding:6px 10px;
-}
-
+textarea{font-size:14px;height:90px;}
+.subtitle-box{padding:12px;}
+button{font-size:11px;padding:6px 10px;}
 }
 
 </style>
@@ -139,7 +122,6 @@ padding:6px 10px;
 
 <textarea id="input" placeholder="Type Manglish..."></textarea>
 
-<!-- CONTROLS -->
 <div class="controls">
 
 <div class="control-group">
@@ -182,7 +164,6 @@ padding:6px 10px;
 
 </div>
 
-<!-- PREVIEW -->
 <div id="preview" class="preview"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -214,7 +195,7 @@ function render(){
 
 if(!lastText) return;
 
-let textHTML=lastText.replace(/\n/g,"<br>");
+let textHTML = lastText; // ✅ FIXED (no <br>)
 
 let color=document.getElementById("color").value;
 let size=document.getElementById("size").value;
@@ -254,8 +235,9 @@ text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`
 display:inline-block;
 white-space:pre-wrap;
 line-height:1.1;
-vertical-align:middle;
 text-align:center;
+max-width:90vw;
+word-break:break-word;
 
 ">
 ${textHTML}
