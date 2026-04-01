@@ -35,7 +35,6 @@ margin:10px auto;
 width:90%;
 }
 
-/* PREVIEW */
 .preview{
 margin-top:20px;
 }
@@ -46,12 +45,17 @@ margin:20px auto;
 width:fit-content;
 }
 
-/* TEXT FIX */
 .subtitle-text{
 display:inline-block;
 white-space:pre-wrap;
 text-align:center;
 margin:0 auto;
+}
+
+.font-label{
+font-size:13px;
+margin-bottom:5px;
+color:#555;
 }
 
 button{
@@ -106,6 +110,7 @@ const fonts=[
 
 document.getElementById("input").addEventListener("input",convert);
 
+/* ✅ FIXED LINE BREAK LOGIC */
 async function convert(){
 
 let val=document.getElementById("input").value;
@@ -116,10 +121,25 @@ render();
 return;
 }
 
-const res=await fetch(`https://inputtools.google.com/request?text=${val}&itc=ml-t-i0-und&num=1`);
+/* SPLIT LINES */
+let lines=val.split("\n");
+let convertedLines=[];
+
+for(let line of lines){
+
+if(line.trim()===""){
+convertedLines.push("");
+continue;
+}
+
+const res=await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
 const data=await res.json();
 
-lastText=data[1][0][1][0];
+convertedLines.push(data[1][0][1][0]);
+}
+
+/* JOIN WITH LINE BREAK */
+lastText=convertedLines.join("<br>");
 
 render();
 }
@@ -130,9 +150,6 @@ let container=document.getElementById("preview");
 container.innerHTML="";
 
 if(!lastText) return;
-
-/* FIX LINE BREAK */
-let text=lastText.split("\n").join("<br>");
 
 let color=document.getElementById("color").value;
 
@@ -156,17 +173,19 @@ fonts.forEach(font=>{
 let box=document.createElement("div");
 box.className="subtitle-box";
 
+/* ✅ FONT NAME BACK */
+let label=document.createElement("div");
+label.className="font-label";
+label.innerText=font;
+
 let textDiv=document.createElement("div");
 textDiv.className="subtitle-text";
 
-textDiv.innerHTML=text;
+textDiv.innerHTML=lastText;
 
 textDiv.style.fontFamily=font;
 textDiv.style.fontSize=size+"px";
 textDiv.style.color=color;
-
-/* FIX CENTER ALIGN PERFECTLY */
-textDiv.style.margin="0 auto";
 
 /* STROKE */
 if(strokeToggle){
@@ -182,7 +201,7 @@ textDiv.style.textShadow=`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.6)`;
 textDiv.style.textShadow="none";
 }
 
-/* BACKGROUND FIX */
+/* BACKGROUND */
 if(bgToggle){
 textDiv.style.background=`rgba(${hexToRgb(bgColor)},${opacity})`;
 textDiv.style.padding=padding+"px";
@@ -192,7 +211,6 @@ textDiv.style.background="transparent";
 textDiv.style.padding="0px";
 }
 
-/* DOWNLOAD */
 let btn=document.createElement("button");
 btn.innerText="Download";
 
@@ -208,6 +226,7 @@ link.click();
 });
 };
 
+box.appendChild(label);
 box.appendChild(textDiv);
 box.appendChild(document.createElement("br"));
 box.appendChild(btn);
@@ -218,7 +237,6 @@ container.appendChild(box);
 
 }
 
-/* HEX TO RGB FIX */
 function hexToRgb(hex){
 let r=parseInt(hex.substr(1,2),16);
 let g=parseInt(hex.substr(3,2),16);
