@@ -193,7 +193,6 @@ let lastText="";
 
 document.getElementById("input").addEventListener("input", convert);
 
-/* ✅ FIXED CONVERT FUNCTION */
 async function convert(){
 
 let val=document.getElementById("input").value;
@@ -203,24 +202,10 @@ document.getElementById("preview").innerHTML="";
 return;
 }
 
-let lines = val.split(/\r?\n/);
-let finalLines = [];
-
-for (let line of lines){
-
-if(line.trim()===""){
-finalLines.push("");
-continue;
-}
-
-const res=await fetch(`https://inputtools.google.com/request?text=${line}&itc=ml-t-i0-und&num=1`);
+const res=await fetch(`https://inputtools.google.com/request?text=${val}&itc=ml-t-i0-und&num=1`);
 const data=await res.json();
 
-finalLines.push(data[1][0][1][0]);
-
-}
-
-lastText = finalLines.join("\n");
+lastText=data[1][0][1][0];
 
 render();
 }
@@ -229,10 +214,7 @@ function render(){
 
 if(!lastText) return;
 
-let textHTML = lastText
-  .replace(/\r\n/g,"\n")
-  .replace(/\n/g,"<br>");
-
+let textHTML=lastText.replace(/\n/g,"<br>");
 let plainText=lastText;
 
 let color=document.getElementById("color").value;
@@ -269,12 +251,14 @@ border-radius:${radius}px;
 background:${bgToggle?bgColor:"transparent"};
 -webkit-text-stroke:${strokeToggle?2:0}px ${strokeColor};
 text-shadow:${shadowToggle?`${shadow}px ${shadow}px ${shadow}px rgba(0,0,0,0.5)`:"none"};
-text-align:center;
-display:block;
-margin:0 auto;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 white-space:pre-wrap;
-line-height:1.4;
-box-sizing:border-box;
+line-height:1.15;
+text-align:center;
 ">
 ${textHTML}
 </div>
